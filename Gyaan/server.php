@@ -53,6 +53,7 @@ if (isset($_POST['reg_user'])) {
     $query = "INSERT INTO `login`(`log_id`, `email`, `password`)  VALUES (NULL,'$email','$password_1')";
     mysqli_query($db, $query);
   	$_SESSION['username'] = $firstname;
+    $_SESSION['email'] = $email;
   	$_SESSION['success'] = "You are now logged in";
   	header('location: index.php');
   }
@@ -88,6 +89,7 @@ if (isset($_POST['login_user'])) {
       $_SESSION['username'] = $user['firstname'];
       $_SESSION['success'] = "You are now logged in";
       $_SESSION['key'] = $user['firstname'];
+            $_SESSION['email']=$email;
       header('location: index.php');
       }
     }

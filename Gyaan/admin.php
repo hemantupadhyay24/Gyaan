@@ -19,11 +19,15 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <script type = "text/javascript" src = "https://code.jquery.com/jquery-2.1.1.min.js"></script>           
+      <script type="text/javascript" src="https://cdnjs.com/libraries/Chart.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+      <script type="text/javascript" src="js/jquery.min.js"></script>
+      <script type="text/javascript" src="js/Chart.min.js"></script>
+      <script src="path/to/chartjs/dist/Chart.js"></script>
       <style type="text/css">
         body {
           height: 100%;
-          background-image: url("https://thegyaan.com/img/cover.jpg");
+          /*background-image: url("https://thegyaan.com/img/cover.jpg");*/
           background-size: 100%;
           font-family:'Roboto Mono', monospace;
         }
@@ -49,12 +53,17 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
         .waves-effect.waves-brown .waves-ripple {
           background-color: #3f51b5;
         }
+        #chart-container {
+        width: 100%;
+        height: auto;
+        background-color: red;
+      }
       </style>
       <script>
          $(document).ready(function(){
           $('.modal').modal();
           $('select').material_select();
-
+          //showGraph();
         });
       </script>
       <!--Let browser know website is optimized for mobile-->
@@ -94,14 +103,17 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
         </div>
       </nav>
       </div>
+      
+
       <!-- user started -->
         <?php if(@$_GET['q']==1) {
         $result = mysqli_query($con,"SELECT * FROM user") or die('Error');
         echo  '
         <div class="container">
-        <h5>List of active users :</h5><br></div>
-        <div class="black container amber-text text-darken-4">
-            <table class="table-striped white-text">
+        <h5 class="red-text darken-3" style="font-family: monospace;
+        };">List of active users :</h5><br></div>
+        <div class="white container amber-text text-darken-4">
+            <table class="table-striped">
             <thead class="indigo-text" style="font-weight: 500;text-transform: uppercase;color:">
             <tr>
                 <th>Sr no.</th>
@@ -140,7 +152,7 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
   if(@$_GET['q']== 2) 
   {
   $q=mysqli_query($con,"SELECT * FROM rank  ORDER BY score DESC " )or die('Error223');
-  echo  '<div class="black container white-text text-darken-4">
+  echo  '<div class="white container black-text text-darken-4">
         <table>
         <thead style="font-weight: 500;text-transform: uppercase;color:red;">
           <tr>
@@ -178,8 +190,9 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
     <!-- ranking-ended -->
     <!--feedback start-->
     <?php if(@$_GET['q']==3) {
-    $result = mysqli_query($con,"SELECT * FROM `feedback` ORDER BY `feedback`.`date` DESC") or die('Error');
-    echo  '<div class="black container white-text text-darken-4">
+      $p = mysqli_query($con,"CREATE OR REPLACE VIEW feedview AS SELECT * FROM feedback ORDER BY `feedback`.`date` DESC;") or die('Error');
+      $result=mysqli_query($con,"SELECT * FROM feedview;");
+    echo  '<div class="white container black-text text-darken-4">
             <table>
             <thead>
               <tr>
@@ -223,9 +236,9 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
 <?php
 if(@$_GET['q']==4 && !(@$_GET['step']) ) {
 echo ' 
-<div class="row">
+<div class="container white black-text">
   <span class="title1" style="margin-left:40%;font-size:30px;"><b>Enter Quiz Details</b></span><br /><br />
-  <div class=" container col-md-6 black white-text">   
+  <div class=" container col-md-6 white black-text">   
   <form name="form" action="update.php?q=addquiz"  method="POST">
 <!-- Text input-->
 <div class="row">
@@ -284,9 +297,9 @@ echo '
 <?php
 if(@$_GET['q']==4 && (@$_GET['step'])==2 ) {
   echo ' 
-  <div class="row">
-  <span class="title1" style="margin-left:40%;font-size:30px;"><b>Enter Question Details</b></span><br /><br />
-  <div class="container black white-text">
+  <div class="container white black-text">
+  <span class="title1" style="margin-left:30%;font-size:30px;"><b>Enter Question Details</b></span><br /><br />
+  <div class="container white black-text">
   <form name="form" action="update.php?q=addqns&n='.@$_GET['n'].'&eid='.@$_GET['eid'].'&ch=4 "  method="POST">';
   for($i=1;$i<=@$_GET['n'];$i++)
   {
@@ -345,9 +358,9 @@ if(@$_GET['q']==4 && (@$_GET['step'])==2 ) {
 <?php if(@$_GET['q']==5) {
 
   $result = mysqli_query($con,"SELECT * FROM quiz ORDER BY date DESC") or die('Error');
-  echo  '<div class="container black white-text">
+  echo  '<div class="container white black-text">
         <table>
-        <thead>
+        <thead class="red">
         <tr>
           <td>Sr no.</td>
           <td>Topic</td>
@@ -361,7 +374,7 @@ $c=1;
 while($row = mysqli_fetch_array($result)) {
   $title = $row['title'];
   $total = $row['total'];
-  $sahi = $row['sahi'];
+  $rightans = $row['rightans'];
   $time = $row['time'];
   $eid = $row['eid'];
   echo '
@@ -370,7 +383,7 @@ while($row = mysqli_fetch_array($result)) {
       <td>'.$c++.'</td>
       <td>'.$title.'</td>
       <td>'.$total.'</td>
-      <td>'.$sahi*$total.'</td>
+      <td>'.$rightans*$total.'</td>
       <td>'.$time.'&nbsp;min</td>
       <td><a href="update.php?q=rmquiz&eid='.$eid.'" class="pull-right btn sub1" style="margin:0px;background:red">&nbsp;<i class="material-icons left">history</i></a>
       </td>

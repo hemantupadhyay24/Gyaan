@@ -22,7 +22,7 @@
        <link href='https://fonts.googleapis.com/css?family=Fjalla+One|Oswald|Baloo+Chettan|Germania+One|Patua+One|Russo+One' rel='stylesheet'>
        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
         <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:500" rel="stylesheet">
-
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.4/css/materialize.min.css">
       <!--Import materialize.css-->
       <!-- <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/> -->
       <!-- Compiled and minified CSS -->
@@ -93,22 +93,17 @@
       </div>
         <!-- courses-start -->
         <?php if(@$_GET['q']==0){
-          echo'
-
-
-          ';
-        }
-        ?>
+         }?>
         <!-- courses-end -->
         <!--home start-->
         <?php if(@$_GET['q']==1) {
           $result = mysqli_query($con,"SELECT * FROM quiz ORDER BY date DESC") or die('Error');
           echo'
-          <div class="container black white-text">
+          <div class="container white black-text">
           <span class="title1" style="margin-left:40%;font-size:30px;"><b>Contest Details</b></span><br /><br />
           <table class="table">
           <thead/>
-          <tr>
+          <tr style="text-transform:uppercase;">
             <td><b>Sr no.</b></td>
             <td><b>Subject</b></td>
             <td><b>Total questions</b></td>
@@ -122,18 +117,18 @@
         while($row = mysqli_fetch_array($result)) {
         $title = $row['title'];
         $total = $row['total'];
-        $sahi = $row['sahi'];
+        $rightans = $row['rightans'];
         $time = $row['time'];
         $eid = $row['eid'];
         $q12=mysqli_query($con,"SELECT score FROM history WHERE eid='$eid'" )or die('Error98');
         $rowcount=mysqli_num_rows($q12);  
         if($rowcount == 0){
         echo '
-        <tr>
+        <tr class ="red" style="text-transform:uppercase;">
           <td>'.$c++.'</td>
           <td>'.$title.'</td>
           <td>'.$total.'</td>
-          <td>'.$sahi*$total.'</td>
+          <td>'.$rightans*$total.'</td>
           <td>'.$time.'&nbsp;min</td>
           <td><b><a href="index.php?q=quiz&step=2&eid='.$eid.'&n=1&t='.$total.'" class="btn green black-text"><i class="material-icons left">start</i>&nbsp;<span class="title1"><b>Start</b></span></a></b></td>
         </tr>';
@@ -141,11 +136,11 @@
         else
         {
         echo 
-        '<tr class="green">
+        '<tr class="green" style="text-transform:uppercase;">
           <td>'.$c++.'</td>
           <td>'.$title.'</td>
           <td>'.$total.'</td>
-          <td>'.$sahi*$total.'</td>
+          <td>'.$rightans*$total.'</td>
           <td>'.$time.'</td>
           <td><b><a href="update.php?q=quizre&step=25&eid='.$eid.'&n=1&t='.$total.'" class="btn red black-text"><i class="material-icons left">repeat</i>&nbsp;Restart</a></b></td>
         </tr>';
@@ -161,7 +156,7 @@
       $sn=@$_GET['n'];
       $total=@$_GET['t'];
       $q=mysqli_query($con,"SELECT * FROM questions WHERE eid='$eid' AND sn='$sn' " );
-      echo '<div class="container black white-text">';
+      echo '<div class="container  white black-text"">';
       while($row=mysqli_fetch_array($q) )
       {
       $qns=$row['qns'];
@@ -171,16 +166,18 @@
       $q=mysqli_query($con,"SELECT * FROM options WHERE qid='$qid' " );
       echo '<div class="container"><form action="update.php?q=quiz&step=2&eid='.$eid.'&n='.$sn.'&t='.$total.'&qid='.$qid.'" method="POST" class="form-horizontal container">
       <br /> ';
-
+      $c=0;
       while($row=mysqli_fetch_array($q) )
       { 
-        $c=2;
+        
         $option=$row['option'];
         $optionid=$row['optionid'];
-              echo'<p class="col s6 offset-s3">
-                <input type="radio" name="ans" id="'.$c.'test" value="'.$optionid.'">
-                <label class="white-text" for="test'.$c.'test">'.$option.'</label></p>';
-                $c--;
+         echo'<p class="col s6 offset-s3">
+          <label>
+            <input name="ans" type="radio" value="'.$optionid.'" />
+            <span>'.$option.'</span>
+          </label>
+        </p>';
       }
 echo'<br><br><button type="submit" class="btn waves-effect waves-light indigo darken-4 black-text">Submit<i class="material-icons left">send</i></button><br><br><br>
       </form></div>';
@@ -191,16 +188,16 @@ if(@$_GET['q']== 'result' && @$_GET['eid'])
 {
   $eid=@$_GET['eid'];
   $q=mysqli_query($con,"SELECT * FROM history WHERE eid='$eid'" )or die('Error157');
-  echo  '<div class="container black">
-  <center><h1 class="title white-text">Result</h1><center><br />
+  echo  '<div class="container white">
+  <center><h1 class="title balck-text">Result</h1><center><br />
   <table class="table table-striped" style="font-size:20px;font-weight:1000;">';
   $row=mysqli_fetch_array($q);
     $s=$row['score'];
     $w=$row['wrong'];
-    $r=$row['sahi'];
+    $rightans=$row['rightans'];
     $qa=$row['level'];
     echo '<tr style="color:#66CCFF"><td>Total Questions</td><td>'.$qa.'</td></tr>
-          <tr style="color:#99cc32"><td>Right Answers</td><td>'.$r.'</td></tr> 
+          <tr style="color:#99cc32"><td>Right Answers</td><td>'.$rightans.'</td></tr> 
         <tr style="color:red"><td>Wrong Answers</td><td>'.$w.'</td></tr>
         <tr style="color:#66CCFF"><td>Score</td><td>'.$s.'</td></tr>';
     $q=mysqli_query($con,"SELECT * FROM rank WHERE  eid='$eid'")or die('Error157');
@@ -218,7 +215,7 @@ if(@$_GET['q']== 'result' && @$_GET['eid'])
 if(@$_GET['q']== 2) 
 {
 $q=mysqli_query($con,"SELECT * FROM history WHERE eid='$eid' ORDER BY date DESC " )or die('Error197');
-echo  '<div class="panel title">
+echo  '<div class="container  white black-text"">
 <table class="table table-striped title1" >
 <tr style="color:red"><td><b>S.N.</b></td><td><b>Quiz</b></td><td><b>Question Solved</b></td><td><b>Right</b></td><td><b>Wrong<b></td><td><b>Score</b></td>';
 $c=0;
@@ -227,7 +224,7 @@ while($row=mysqli_fetch_array($q) )
 $eid=$row['eid'];
 $s=$row['score'];
 $w=$row['wrong'];
-$r=$row['sahi'];
+$rightans=$row['rightans'];
 $qa=$row['level'];
 $q23=mysqli_query($con,"SELECT title FROM quiz WHERE  eid='$eid' " )or die('Error208');
 while($row=mysqli_fetch_array($q23) )
@@ -235,7 +232,7 @@ while($row=mysqli_fetch_array($q23) )
 $title=$row['title'];
 }
 $c++;
-echo '<tr><td>'.$c.'</td><td>'.$title.'</td><td>'.$qa.'</td><td>'.$r.'</td><td>'.$w.'</td><td>'.$s.'</td></tr>';
+echo '<tr><td>'.$c.'</td><td>'.$title.'</td><td>'.$qa.'</td><td>'.$rightans.'</td><td>'.$w.'</td><td>'.$s.'</td></tr>';
 }
 echo'</table></div>';
 }
@@ -243,9 +240,9 @@ echo'</table></div>';
 //ranking start
   if(@$_GET['q']== 3) 
   {
-    $q=mysqli_query($con,"SELECT * FROM rank  ORDER BY score DESC " )or die('Error223');
+    $q=mysqli_query($con,"SELECT rank.* ,users.* FROM rank,users WHERE rank.email=users.email ORDER BY score DESC " )or die('Error223');
     echo  
-    '<div class="row black white-text">
+    '<div class="container white black-text">
     <table class="table table-striped container">
     <thead>
     <tr style="color:red">
@@ -259,25 +256,22 @@ echo'</table></div>';
   $c=0;
   while($row=mysqli_fetch_array($q) )
   {
-  $e=$row['email'];
-  $s=$row['score'];
-  $q12=mysqli_query($con,"SELECT * FROM user WHERE email='$e' " )or die('Error231');
-  while($row=mysqli_fetch_array($q12) )
-  {
-    $name=$row['name'];
+    $e=$row['email'];
+    $s=$row['score'];
+    $name=$row['firstname'];
     $gender=$row['gender'];
     $college=$row['college'];
   }
   $c++;
   echo 
-  '<tbody style="color:#99cc32" >
-  <tr>
+  '<tbody >
+  <tr style="text-transform:uppercase;">
     <td><b>'.$c.'</b></td>
     <td>'.$name.'</td>
     <td>'.$gender.'</td>
     <td>'.$college.'</td>
     <td style="color:red">'.$s.'</td><td>
-    </tbody>';}
+    </tbody>';
     echo '</table></div></div>';}?>
               <!--JavaScript at end of body for optimized loading-->
       <script type="text/javascript" src="js/materialize.min.js"></script>
