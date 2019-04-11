@@ -1,5 +1,6 @@
 <?php 
 session_start();
+
 $con= new mysqli('localhost','root','','project')or die("Could not connect to mysql".mysqli_error($con));
  ?>
 <!DOCTYPE html>
@@ -27,7 +28,7 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
       <style type="text/css">
         body {
           height: 100%;
-          /*background-image: url("https://thegyaan.com/img/cover.jpg");*/
+          background-image: url("https://thegyaan.com/img/cover.jpg");
           background-size: 100%;
           font-family:'Roboto Mono', monospace;
         }
@@ -103,11 +104,10 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
         </div>
       </nav>
       </div>
-      
-
+        
       <!-- user started -->
         <?php if(@$_GET['q']==1) {
-        $result = mysqli_query($con,"SELECT * FROM user") or die('Error');
+        $result = mysqli_query($con,"SELECT * FROM users") or die('Error');
         echo  '
         <div class="container">
         <h5 class="red-text darken-3" style="font-family: monospace;
@@ -127,8 +127,8 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
             </thead>';
         $c=1;
         while($row = mysqli_fetch_array($result)) {
-          $name = $row['name'];
-          $mob = $row['mob'];
+          $name = $row['firstname'];
+          $mob = $row['mobile'];
           $gender = $row['gender'];
             $email = $row['email'];
           $college = $row['college'];
@@ -168,9 +168,9 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
   {
     $score=$row['score'];
     $email=$row['email'];
-    $query=mysqli_query($con,"SELECT * FROM user WHERE email='$email' " )or die('Error231');
+    $query=mysqli_query($con,"SELECT * FROM users WHERE email='$email' " )or die('Error231');
     while($row=mysqli_fetch_array($query) ){
-      $name=$row['name'];
+      $name=$row['firstname'];
       $gender=$row['gender'];
       $college=$row['college'];
       echo '
@@ -236,8 +236,8 @@ $con= new mysqli('localhost','root','','project')or die("Could not connect to my
 <?php
 if(@$_GET['q']==4 && !(@$_GET['step']) ) {
 echo ' 
-<div class="container white black-text">
-  <span class="title1" style="margin-left:40%;font-size:30px;"><b>Enter Quiz Details</b></span><br /><br />
+  <span class="red-text" style="margin-left:40%;font-size:30px;"><b>Enter Quiz Details</b></span><br /><br />
+<div class="container col-md-6 black-text">
   <div class=" container col-md-6 white black-text">   
   <form name="form" action="update.php?q=addquiz"  method="POST">
 <!-- Text input-->
@@ -385,7 +385,7 @@ while($row = mysqli_fetch_array($result)) {
       <td>'.$total.'</td>
       <td>'.$rightans*$total.'</td>
       <td>'.$time.'&nbsp;min</td>
-      <td><a href="update.php?q=rmquiz&eid='.$eid.'" class="pull-right btn sub1" style="margin:0px;background:red">&nbsp;<i class="material-icons left">history</i></a>
+      <td><a href="update.php?q=rmquiz&eid='.$eid.'" class="pull-right btn sub1" style="margin:0px;background:red">&nbsp;<i class="material-icons left">history</i>DELETE</a>
       </td>
     </tr>
   </tbody>';

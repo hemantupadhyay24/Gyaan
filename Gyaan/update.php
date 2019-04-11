@@ -175,7 +175,7 @@ if(isset($_SESSION['key'])){
 		$rowcount=mysqli_num_rows($q);
 		if($rowcount == 0)
 		{
-		$q2=mysqli_query($con,"INSERT INTO rank VALUES('$email','$s',NOW())")or die('Error165');
+		$q2=mysqli_query($con,"INSERT INTO rank VALUES('$name',$email','$s',NOW())")or die('Error165');
 		}
 		else
 		{

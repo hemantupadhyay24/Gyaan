@@ -80,9 +80,13 @@ session_start(); ?>
 
       <?php
         $name=$_SESSION['username'];
+        // $cr=mysqli_query($con,"SELECT `courses_sub` FROM `users` WHERE `firstname`= $username;");
+
+        //           $sql=mysqli_query($con,"CREATE OR REPLACE TRIGGER `course_gate` AFTER INSERT ON `courses` BEGIN UPDATE `users` SET `courses_sub`= $cr+1 WHERE `firstname`=$name;");
+              
             if(@$_GET['cid']==1){
                 echo'
-        <div class= style="background-image:url("https://www.geeksforgeeks.org/wp-content/uploads/webbannerAVA-min.png");"
+        <div class="container")
         <div class="row">
         <div class="col s4 offset-s1 white black-text">
           <div class="card">
@@ -483,8 +487,7 @@ session_start(); ?>
                   }
                 }echo'</table></div>';
               } 
-                     // $sql=mysqli_query($con,"CREATE OR REPLACE TRIGGER `course_gate` AFTER INSERT ON `courses` BEGIN UPDATE `users` SET `courses`=(`sub_name`, `courses`, `timestamp`)VALUES('$name','SUDOGATE',NOW());END;");
-                
+
 
         ?>
       <!--JavaScript at end of body for optimized loading-->

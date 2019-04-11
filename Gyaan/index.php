@@ -74,7 +74,7 @@
           <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
           <ul class="right hide-on-med-and-down ">
             <li><a style="color:#ff6f00;">Hello, <?php echo $_SESSION['username'];?></a></li>
-            <li><a style="color:#ff6f00;" href="Home.php"><i class="material-icons left">home</i>Home</a></li>
+            <li><a style="color:#ff6f00;" href="index.php?q=10"><i class="material-icons left">home</i>Home</a></li>
             <li><a style="color:#ff6f00;" href="search.php"><i class="material-icons left">people</i>Courses</a></li>
             <li><a style="color:#ff6f00;" href="index.php?q=1"><i class="material-icons left">map</i>Contest</a></li>
             <li><a style="color:#ff6f00;" href="index.php?q=3"><i class="material-icons left">history</i>Ranking</a></li>
@@ -82,7 +82,7 @@
           </ul>
           <ul class="side-nav" id="mobile-demo">
             <li><a style="color:#ff6f00;">Hello, <?php echo $_SESSION['username'];?></a></li>
-           <li><a style="color:#ff6f00;" href="Home.php"><i class="material-icons left">home</i>Home</a></li>
+           <li><a style="color:#ff6f00;" href="index.php?q=10"><i class="material-icons left">home</i>Home</a></li>
             <li><a style="color:#ff6f00;" href="index.php?q=0"><i class="material-icons left">people</i>Courses</a></li>
             <li><a style="color:#ff6f00;" href="index.php?q=1"><i class="material-icons left">map</i>Contest</a></li>
             <li><a style="color:#ff6f00;" href="index.php?q=3"><i class="material-icons left">map</i>Ranking</a></li>
@@ -92,8 +92,25 @@
       </nav>
       </div>
         <!-- courses-start -->
-        <?php if(@$_GET['q']==0){
-         }?>
+        <?php if(@$_GET['q']==10){
+        $name=$_SESSION['username'];
+        $result = mysqli_query($con,"SELECT * FROM users WHERE firstname = 'Hemant';");
+        $row = mysqli_fetch_assoc($result);
+        // var_dump($row); 
+        //echo $row['email'];
+        echo  '
+        <div class="container">
+        <h5 class="red-text darken-3" style="font-family: monospace;
+        };">Your Details :</h5><br></div>
+        <div class="container amber-text text-darken-4">
+            <h6>NAME : '.$row['firstname'].'</h6>
+            <h6>MOBILE :'.$row['mobile'].'</h6>
+            <h6>GENDER :'.$row['gender'].'</h6>
+            <h6>EMAIL :'.$row['email'].'</h6>
+            <h6>COLLEGE :'.$row['college'].'</h6>
+            <h6>NO. OF SUBSCRIBED COURSES :'.$row['courses_sub'].'</h6>
+            </div>
+        </div>';}?>
         <!-- courses-end -->
         <!--home start-->
         <?php if(@$_GET['q']==1) {
@@ -188,8 +205,9 @@ if(@$_GET['q']== 'result' && @$_GET['eid'])
 {
   $eid=@$_GET['eid'];
   $q=mysqli_query($con,"SELECT * FROM history WHERE eid='$eid'" )or die('Error157');
-  echo  '<div class="container white">
-  <center><h1 class="title balck-text">Result</h1><center><br />
+  echo  '
+    <center><h4 class="title red-text">Result</h4><center><br />
+  <div class="container white">
   <table class="table table-striped" style="font-size:20px;font-weight:1000;">';
   $row=mysqli_fetch_array($q);
     $s=$row['score'];
@@ -199,13 +217,7 @@ if(@$_GET['q']== 'result' && @$_GET['eid'])
     echo '<tr style="color:#66CCFF"><td>Total Questions</td><td>'.$qa.'</td></tr>
           <tr style="color:#99cc32"><td>Right Answers</td><td>'.$rightans.'</td></tr> 
         <tr style="color:red"><td>Wrong Answers</td><td>'.$w.'</td></tr>
-        <tr style="color:#66CCFF"><td>Score</td><td>'.$s.'</td></tr>';
-    $q=mysqli_query($con,"SELECT * FROM rank WHERE  eid='$eid'")or die('Error157');
-  while($row=mysqli_fetch_array($q) )
-  {
-  $s=$row['score'];
-  echo '<tr style="color:#990000"><td>Overall Score&nbsp;<span class="glyphicon glyphicon-stats" aria-hidden="true"></span></td><td>'.$s.'</td></tr>';
-  }
+        <tr style="color:#990000"><td>Score</td><td>'.$s.'</td></tr>';
   echo '</table></div>';
 }
 ?>
@@ -240,38 +252,42 @@ echo'</table></div>';
 //ranking start
   if(@$_GET['q']== 3) 
   {
-    $q=mysqli_query($con,"SELECT rank.* ,users.* FROM rank,users WHERE rank.email=users.email ORDER BY score DESC " )or die('Error223');
-    echo  
-    '<div class="container white black-text">
-    <table class="table table-striped container">
-    <thead>
-    <tr style="color:red">
-      <td><b>Rank</b></td>
-      <td><b>Name</b></td>
-      <td><b>Gender</b></td>
-      <td><b>College</b></td>
-      <td><b>Score</b></td>
-    </tr>
-    </thead>';
-  $c=0;
+    $q=mysqli_query($con,"SELECT * FROM rank  ORDER BY score DESC " )or die('Error223');
+  echo  '
+        <center><h4 class="title red-text">Leaderboard :</h4><center><br />
+        <div class="white container black-text text-darken-4">
+        <table>
+        <thead style="font-weight: 500;text-transform: uppercase;color:red;">
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>College</th>
+            <th>Score</th>
+          </tr>
+        </thead>';
+  $c=1;
   while($row=mysqli_fetch_array($q) )
   {
-    $e=$row['email'];
-    $s=$row['score'];
-    $name=$row['firstname'];
-    $gender=$row['gender'];
-    $college=$row['college'];
+    $score=$row['score'];
+    $email=$row['email'];
+    $query=mysqli_query($con,"SELECT * FROM users WHERE email='$email' " )or die('Error231');
+    while($row=mysqli_fetch_array($query) ){
+      $name=$row['firstname'];
+      $gender=$row['gender'];
+      $college=$row['college'];
+      echo '
+        <tbody>
+          <tr style="text-transform : uppercase;">
+            <td style="color:green;">'.$c++.'</td>
+            <td>'.$name.'</td>
+            <td>'.$gender.'</td>
+            <td>'.$college.'</td>
+            <td>'.$score.'</td>
+          </tr>
+        </tbody>';
+    }
   }
-  $c++;
-  echo 
-  '<tbody >
-  <tr style="text-transform:uppercase;">
-    <td><b>'.$c.'</b></td>
-    <td>'.$name.'</td>
-    <td>'.$gender.'</td>
-    <td>'.$college.'</td>
-    <td style="color:red">'.$s.'</td><td>
-    </tbody>';
     echo '</table></div></div>';}?>
               <!--JavaScript at end of body for optimized loading-->
       <script type="text/javascript" src="js/materialize.min.js"></script>
